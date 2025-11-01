@@ -338,15 +338,16 @@ log_step "Step 4: Installing mods..."
 mkdir -p /home/steam/stardewvalley/Mods
 
 if [ -d "/home/steam/preinstalled-mods" ]; then
-    # Check if Mods directory already has content (from volume mount)
-    if [ "$(ls -A /home/steam/stardewvalley/Mods 2>/dev/null)" ]; then
-        log_info "Mods directory already exists with content, skipping installation..."
-        log_info "模组目录已存在且有内容，跳过安装..."
+    # Check if our custom mods are already installed (check for AutoHideHost as indicator)
+    if [ -d "/home/steam/stardewvalley/Mods/AutoHideHost" ]; then
+        log_info "Custom mods already installed, skipping..."
+        log_info "自定义模组已安装，跳过..."
     else
         log_info "Installing preinstalled mods..."
-        rm -rf /home/steam/stardewvalley/Mods
-        mkdir -p /home/steam/stardewvalley/Mods
+        log_info "安装预配置模组..."
         cp -r /home/steam/preinstalled-mods/* /home/steam/stardewvalley/Mods/
+        log_success "Preinstalled mods copied successfully!"
+        log_success "预配置模组复制完成！"
     fi
 
     log_info "Installed mods:"

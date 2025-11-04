@@ -1,6 +1,14 @@
-# Puppy Stardew Server | 星露谷物语一键搭建开服联机
-
 <div align="center">
+
+<table>
+<tr>
+<td width="30%" align="center">
+  <img src="logo.png" alt="Puppy Stardew Server Logo" width="200"/>
+</td>
+<td width="70%">
+
+# Puppy Stardew Server
+## 星露谷物语一键搭建开服联机
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/truemanlive/puppy-stardew-server)](https://hub.docker.com/r/truemanlive/puppy-stardew-server)
 [![Docker Image Size](https://img.shields.io/docker/image-size/truemanlive/puppy-stardew-server)](https://hub.docker.com/r/truemanlive/puppy-stardew-server)
@@ -12,6 +20,10 @@
 **One-Command Stardew Valley Server Deployment | Cross-Platform Multiplayer Support**
 
 **一键部署星露谷物语服务器 | 全平台联机支持**
+
+</td>
+</tr>
+</table>
 
 </div>
 

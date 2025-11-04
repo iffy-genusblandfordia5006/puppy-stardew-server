@@ -159,57 +159,80 @@ configure_steam() {
     # Copy .env.example to .env
     cp .env.example .env
 
-    # Ask for Steam username
     echo ""
-    ask_question "Enter your Steam username:"
-    read -r steam_username
-
-    # Ask for Steam password (hidden input)
+    print_info "═══════════════════════════════════════════════════"
+    print_info "  Configuration Method"
+    print_info "═══════════════════════════════════════════════════"
     echo ""
-    ask_question "Enter your Steam password (input hidden):"
-    read -rs steam_password
+    ask_question "Do you want to manually input configuration in terminal? (y/n)"
+    echo -e "${CYAN}  y${NC} - Input Steam username, password and VNC password now"
+    echo -e "${CYAN}  n${NC} - Manually edit .env file later (recommended for Linux experts)"
     echo ""
+    read -r manual_input
 
-    # Validate inputs
-    if [ -z "$steam_username" ] || [ -z "$steam_password" ]; then
-        print_error "Steam username and password cannot be empty!"
-        exit 1
-    fi
+    if [[ $manual_input =~ ^[Yy]$ ]]; then
+        # Manual input mode
+        echo ""
+        ask_question "Enter your Steam username:"
+        read -r steam_username
 
-    # Ask about Steam Guard
-    echo ""
-    print_info "If you have Steam Guard enabled, you'll need to enter a code later."
-    print_info "Consider using the Steam Guard mobile app for faster codes."
+        echo ""
+        ask_question "Enter your Steam password (input hidden):"
+        read -rs steam_password
+        echo ""
 
-    # Ask for VNC password
-    echo ""
-    ask_question "Enter VNC password (max 8 chars, press Enter for default 'stardew1'):"
-    read -r vnc_password
-    if [ -z "$vnc_password" ]; then
-        vnc_password="stardew1"
-    fi
+        # Validate inputs
+        if [ -z "$steam_username" ] || [ -z "$steam_password" ]; then
+            print_error "Steam username and password cannot be empty!"
+            exit 1
+        fi
 
-    # Validate and truncate VNC password to 8 characters
-    if [ ${#vnc_password} -gt 8 ]; then
-        print_warning "VNC password is longer than 8 characters!"
-        print_warning "VNC protocol will truncate it to: ${vnc_password:0:8}"
-        vnc_password="${vnc_password:0:8}"
-    fi
+        echo ""
+        print_info "If you have Steam Guard enabled, you'll need to enter a code later."
+        print_info "Consider using the Steam Guard mobile app for faster codes."
 
-    # Update .env file
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        # macOS
-        sed -i '' "s/STEAM_USERNAME=.*/STEAM_USERNAME=$steam_username/" .env
-        sed -i '' "s/STEAM_PASSWORD=.*/STEAM_PASSWORD=$steam_password/" .env
-        sed -i '' "s/VNC_PASSWORD=.*/VNC_PASSWORD=$vnc_password/" .env
+        echo ""
+        ask_question "Enter VNC password (max 8 chars, press Enter for default 'stardew1'):"
+        read -r vnc_password
+        if [ -z "$vnc_password" ]; then
+            vnc_password="stardew1"
+        fi
+
+        # Validate and truncate VNC password to 8 characters
+        if [ ${#vnc_password} -gt 8 ]; then
+            print_warning "VNC password is longer than 8 characters!"
+            print_warning "VNC protocol will truncate it to: ${vnc_password:0:8}"
+            vnc_password="${vnc_password:0:8}"
+        fi
+
+        # Update .env file
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            # macOS
+            sed -i '' "s/STEAM_USERNAME=.*/STEAM_USERNAME=$steam_username/" .env
+            sed -i '' "s/STEAM_PASSWORD=.*/STEAM_PASSWORD=$steam_password/" .env
+            sed -i '' "s/VNC_PASSWORD=.*/VNC_PASSWORD=$vnc_password/" .env
+        else
+            # Linux
+            sed -i "s/STEAM_USERNAME=.*/STEAM_USERNAME=$steam_username/" .env
+            sed -i "s/STEAM_PASSWORD=.*/STEAM_PASSWORD=$steam_password/" .env
+            sed -i "s/VNC_PASSWORD=.*/VNC_PASSWORD=$vnc_password/" .env
+        fi
+
+        print_success "Steam credentials configured!"
     else
-        # Linux
-        sed -i "s/STEAM_USERNAME=.*/STEAM_USERNAME=$steam_username/" .env
-        sed -i "s/STEAM_PASSWORD=.*/STEAM_PASSWORD=$steam_password/" .env
-        sed -i "s/VNC_PASSWORD=.*/VNC_PASSWORD=$vnc_password/" .env
+        # Manual .env editing mode
+        echo ""
+        print_info "Please manually edit the .env file to configure your credentials:"
+        echo -e "  ${CYAN}nano .env${NC}  or  ${CYAN}vim .env${NC}"
+        echo ""
+        print_info "You need to configure the following fields:"
+        echo -e "  ${YELLOW}STEAM_USERNAME${NC}  - Your Steam username"
+        echo -e "  ${YELLOW}STEAM_PASSWORD${NC}  - Your Steam password"
+        echo -e "  ${YELLOW}VNC_PASSWORD${NC}    - VNC access password (max 8 characters)"
+        echo ""
+        ask_question "Press Enter to continue after configuration..."
+        read -r
     fi
-
-    print_success "Steam credentials configured!"
 }
 
 setup_directories() {

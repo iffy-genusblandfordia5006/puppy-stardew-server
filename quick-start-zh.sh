@@ -131,34 +131,61 @@ configure_steam() {
     cp .env.example .env
 
     echo ""
-    ask_question "请输入您的 Steam 用户名："
-    read -r steam_username
+    print_info "═══════════════════════════════════════════════════"
+    print_info "  配置方式选择"
+    print_info "═══════════════════════════════════════════════════"
+    echo ""
+    ask_question "是否在终端手动输入配置信息？(y/n)"
+    echo -e "${CYAN}  y${NC} - 现在在终端输入 Steam 用户名、密码和 VNC 密码"
+    echo -e "${CYAN}  n${NC} - 稍后手动编辑 .env 文件（推荐熟悉 Linux 用户）"
+    echo ""
+    read -r manual_input
 
-    echo ""
-    ask_question "请输入您的 Steam 密码："
-    read -rs steam_password
-    echo ""
+    if [[ $manual_input =~ ^[Yy]$ ]]; then
+        # 手动输入模式
+        echo ""
+        ask_question "请输入您的 Steam 用户名："
+        read -r steam_username
 
-    echo ""
-    ask_question "请输入 VNC 密码（最多8个字符，按回车使用默认 'stardew1'）："
-    read -r vnc_password
-    if [ -z "$vnc_password" ]; then
-        vnc_password="stardew1"
+        echo ""
+        ask_question "请输入您的 Steam 密码："
+        read -rs steam_password
+        echo ""
+
+        echo ""
+        ask_question "请输入 VNC 密码（最多8个字符，按回车使用默认 'stardew1'）："
+        read -r vnc_password
+        if [ -z "$vnc_password" ]; then
+            vnc_password="stardew1"
+        fi
+
+        # 验证并截断 VNC 密码为 8 个字符
+        if [ ${#vnc_password} -gt 8 ]; then
+            print_warning "VNC 密码超过 8 个字符！"
+            print_warning "VNC 协议会自动截断为：${vnc_password:0:8}"
+            vnc_password="${vnc_password:0:8}"
+        fi
+
+        # 更新 .env 文件
+        sed -i "s/^STEAM_USERNAME=.*/STEAM_USERNAME=$steam_username/" .env
+        sed -i "s/^STEAM_PASSWORD=.*/STEAM_PASSWORD=$steam_password/" .env
+        sed -i "s/^VNC_PASSWORD=.*/VNC_PASSWORD=$vnc_password/" .env
+
+        print_success "Steam 配置已保存！"
+    else
+        # 手动编辑 .env 文件模式
+        echo ""
+        print_info "请手动编辑 .env 文件来配置您的凭证："
+        echo -e "  ${CYAN}nano .env${NC}  或  ${CYAN}vim .env${NC}"
+        echo ""
+        print_info "需要配置以下字段："
+        echo -e "  ${YELLOW}STEAM_USERNAME${NC}  - 您的 Steam 用户名"
+        echo -e "  ${YELLOW}STEAM_PASSWORD${NC}  - 您的 Steam 密码"
+        echo -e "  ${YELLOW}VNC_PASSWORD${NC}    - VNC 访问密码（最多8个字符）"
+        echo ""
+        ask_question "配置完成后，按回车继续..."
+        read -r
     fi
-
-    # 验证并截断 VNC 密码为 8 个字符
-    if [ ${#vnc_password} -gt 8 ]; then
-        print_warning "VNC 密码超过 8 个字符！"
-        print_warning "VNC 协议会自动截断为：${vnc_password:0:8}"
-        vnc_password="${vnc_password:0:8}"
-    fi
-
-    # 更新 .env 文件
-    sed -i "s/^STEAM_USERNAME=.*/STEAM_USERNAME=$steam_username/" .env
-    sed -i "s/^STEAM_PASSWORD=.*/STEAM_PASSWORD=$steam_password/" .env
-    sed -i "s/^VNC_PASSWORD=.*/VNC_PASSWORD=$vnc_password/" .env
-
-    print_success "Steam 配置已保存！"
 }
 
 setup_directories() {

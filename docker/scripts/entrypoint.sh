@@ -209,7 +209,7 @@ if [ "$ENABLE_VNC" = "true" ]; then
 
     # Create VNC password file
     mkdir -p ~/.vnc
-    echo "$VNC_PASSWORD" | x11vnc -storepasswd /tmp/vncpass - 2>&1 | grep -v "^$"
+    echo "$VNC_PASSWORD" | x11vnc -storepasswd - /tmp/vncpass 2>&1 | grep -v "^$"
 
     if [ ! -f /tmp/vncpass ]; then
         log_error "Failed to create VNC password file"

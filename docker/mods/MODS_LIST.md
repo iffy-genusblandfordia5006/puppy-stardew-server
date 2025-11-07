@@ -43,6 +43,20 @@ This document lists all the mods included in the Puppy Stardew Server Docker ima
   - config.json
   - manifest.json
 
+### 4. Skill Level Guard
+- **Author**: Puppy-Stardew
+- **Version**: 1.1.0
+- **Description**: Prevents Always On Server from forcing host to Level 10, restores real XP-based levels safely.
+- **Unique ID**: Puppy.SkillLevelGuard
+- **Files**:
+  - SkillLevelGuard.dll (9.7K)
+  - manifest.json (440 bytes)
+- **Features**:
+  - **XP-based level calculation** - Restores accurate skill levels based on experience points
+  - **Prevents auto-level 10** - Blocks Always On Server's forced skill upgrades
+  - **Clears level-up queue** - Prevents unwanted LevelUpMenu popups
+  - **Preserves normal progression** - Doesn't interfere with natural skill upgrades
+
 ## Installation
 
 These mods are pre-installed in the Docker image and will be automatically loaded when the server starts. Each mod's configuration can be customized by mounting a volume to the `/home/steam/stardewvalley/Mods/` directory in the container.
@@ -57,6 +71,7 @@ These mods are pre-installed in the Docker image and will be automatically loade
 - **Always On Server**: Enables headless 24/7 server operation
 - **Server Auto Load**: Helps manage and monitor saves in headless mode. Displays save information and loading instructions on startup
 - **AutoHideHost**: Ensures the host player remains hidden and handles day/night transitions seamlessly with instant sleep functionality
+- **Skill Level Guard**: Critical fix for Always On Server's forced Level 10 issue. Uses Harmony patches to intercept and correct skill levels based on actual XP. Tested and verified working in v1.0.49+
 
 ## Usage
 

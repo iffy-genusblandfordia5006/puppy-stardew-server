@@ -166,36 +166,15 @@ graph TB
 
 ### 方式 1：一键部署（推荐小白使用）
 
-**中文版（国际网络）:**
+**中文版:**
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/truman-world/puppy-stardew-server/main/quick-start-zh.sh | bash
 ```
 
-**中文版（国内加速）:**
+**⚠️ 国内网络访问提示:**
 
-如果上面的命令访问失败，可以使用以下国内加速服务：
-
-```bash
-# 方案1: 使用 ghproxy 加速（推荐）
-curl -sSL https://ghproxy.com/https://raw.githubusercontent.com/truman-world/puppy-stardew-server/main/quick-start-zh.sh | bash
-
-# 方案2: 使用 jsdelivr CDN
-curl -sSL https://cdn.jsdelivr.net/gh/truman-world/puppy-stardew-server@main/quick-start-zh.sh | bash
-
-# 方案3: 使用 fastgit 加速
-curl -sSL https://raw.fastgit.org/truman-world/puppy-stardew-server/main/quick-start-zh.sh | bash
-```
-
-💡 **提示**: 如果所有方案都无法访问，可以手动下载脚本后执行：
-```bash
-# 下载脚本
-wget https://ghproxy.com/https://raw.githubusercontent.com/truman-world/puppy-stardew-server/main/quick-start-zh.sh -O quick-start-zh.sh
-# 添加执行权限
-chmod +x quick-start-zh.sh
-# 运行脚本
-./quick-start-zh.sh
-```
+如果上面的命令访问失败（`raw.githubusercontent.com` 被屏蔽），请使用**方式 2：手动部署**（见下方），步骤同样简单，且**完全不需要访问 GitHub**。
 
 脚本会自动：
 - 检查 Docker 安装
@@ -208,7 +187,7 @@ chmod +x quick-start-zh.sh
 **就这么简单！** ☕ 下载游戏文件时去喝杯咖啡（约 1.5GB）。
 
 <details>
-<summary><h3>方式 2：手动部署（进阶用户）</h3></summary>
+<summary><h3>方式 2：手动部署（国内网络友好）</h3></summary>
 
 #### 前置要求
 
@@ -219,51 +198,73 @@ chmod +x quick-start-zh.sh
 - 最低 2GB 内存，推荐 4GB
 - 2GB 可用磁盘空间
 
-#### 步骤 1：下载配置文件
+#### 步骤 1：创建工作目录和配置文件（无需访问 GitHub）
 
 ```bash
-# 克隆仓库
-git clone https://github.com/truman-world/puppy-stardew-server.git
-cd puppy-stardew-server
+# 创建工作目录
+mkdir -p ~/puppy-stardew && cd ~/puppy-stardew
 
-# 或者直接下载文件
-mkdir puppy-stardew && cd puppy-stardew
-wget https://raw.githubusercontent.com/truman-world/puppy-stardew-server/main/docker-compose.yml
-wget https://raw.githubusercontent.com/truman-world/puppy-stardew-server/main/.env.example
-```
+# 直接创建 docker-compose.yml（使用 Docker Hub 镜像）
+cat > docker-compose.yml << 'EOF'
+version: '3.8'
+services:
+  stardew-server:
+    image: truemanlive/puppy-stardew-server:latest
+    container_name: puppy-stardew
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    environment:
+      - STEAM_USERNAME=${STEAM_USERNAME}
+      - STEAM_PASSWORD=${STEAM_PASSWORD}
+      - ENABLE_VNC=${ENABLE_VNC:-true}
+      - VNC_PASSWORD=${VNC_PASSWORD:-stardew123}
+    ports:
+      - "24642:24642/udp"
+      - "5900:5900/tcp"
+    volumes:
+      - ./data/saves:/home/steam/.config/StardewValley:rw
+      - ./data/game:/home/steam/stardewvalley:rw
+      - ./data/steam:/home/steam/Steam:rw
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          memory: 1G
+EOF
 
-#### 步骤 2：配置环境变量
-
-```bash
-# 复制环境变量模板
-cp .env.example .env
-
-# 编辑并填写您的 Steam 凭证
-nano .env  # 或使用您喜欢的编辑器
-```
-
-**`.env` 示例：**
-```env
+# 创建 .env 配置文件
+cat > .env << 'EOF'
+# Steam 账户信息（必填 - 请修改为您的真实账号）
 STEAM_USERNAME=your_steam_username
 STEAM_PASSWORD=your_steam_password
+
+# VNC 配置（可选）
 ENABLE_VNC=true
 VNC_PASSWORD=stardew123
+EOF
+```
+
+#### 步骤 2：编辑配置文件，填入您的 Steam 凭证
+
+```bash
+# 使用文本编辑器修改 .env 文件
+nano .env  # 或使用 vi、vim 等编辑器
 ```
 
 **重要**：您必须在 Steam 上拥有星露谷物语。游戏文件通过您的账户下载。
 
 #### 步骤 3：初始化数据目录
 
-**关键步骤：此步骤可防止"磁盘写入失败"错误！**
-
 ```bash
-# 运行初始化脚本（推荐）
-./init.sh
-
-# 或手动设置
-mkdir -p data/{saves,game,steam,logs}
+# 创建数据目录并设置正确权限
+mkdir -p data/{saves,game,steam}
 chown -R 1000:1000 data/
 ```
+
+**⚠️ 此步骤很重要！** 权限设置不正确会导致 "Disk write failure" 错误。从 v1.0.59+ 版本开始，容器会自动修复权限，但首次创建目录时仍需正确设置。
 
 #### 步骤 4：启动服务器
 

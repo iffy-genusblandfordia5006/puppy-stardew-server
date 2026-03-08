@@ -364,5 +364,9 @@ log_info "Starting auto-enable Always On Server script..."
 log_info "Starting auto-handle ReadyCheckDialog script..."
 /home/steam/scripts/auto-handle-readycheck.sh &
 
+# Start auto-reconnect server script in background
+log_info "Starting auto-reconnect server script..."
+/home/steam/scripts/auto-reconnect-server.sh &
+
 # Run game server (this runs in foreground)
 exec ./StardewModdingAPI --server

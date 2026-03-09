@@ -4,6 +4,8 @@
 
 const fs = require('fs');
 const { execSync, spawnSync } = require('child_process');
+const http = require('http');
+const https = require('https');
 const config = require('../server');
 
 // Status history (in-memory, last 1 hour, every 15s = 240 entries)
@@ -157,7 +159,7 @@ function collectStatus(req = null) {
     season: 'Unknown',
     backupCount: 0,
     modCount: 0,
-    version: 'v1.0.66',
+    version: 'v1.0.76',
     scriptsHealthy: false,
     paused: false,
     events: {
@@ -353,4 +355,86 @@ function restartServer(req, res) {
   }
 }
 
-module.exports = { getStatus, subscribeStatus, restartServer };
+function restartContainer(req, res) {
+  const managerUrl = process.env.MANAGER_URL || '';
+
+  if (managerUrl) {
+    scheduleContainerRecreate(managerUrl).then(() => {
+      res.json({ success: true, message: 'Container recreate initiated' });
+    }).catch((error) => {
+      res.status(500).json({ error: 'Failed to recreate container', details: error.message });
+    });
+    return;
+  }
+
+  try {
+    const result = spawnSync('sh', ['-lc', '(sleep 1; kill -TERM 1) >/dev/null 2>&1 &'], {
+      encoding: 'utf-8',
+      timeout: 5000,
+    });
+
+    if (result.error) {
+      throw result.error;
+    }
+
+    if (result.status !== 0) {
+      throw new Error((result.stderr || result.stdout || 'Unable to schedule container restart').trim());
+    }
+
+    res.json({ success: true, message: 'Container restart initiated' });
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to restart container', details: e.message });
+  }
+}
+
+function scheduleContainerRecreate(managerUrl) {
+  return new Promise((resolve, reject) => {
+    let parsed;
+    try {
+      parsed = new URL('/recreate', managerUrl);
+    } catch (error) {
+      reject(new Error('Invalid manager URL'));
+      return;
+    }
+
+    const client = parsed.protocol === 'https:' ? https : http;
+    const payload = JSON.stringify({ service: 'stardew-server' });
+
+    const request = client.request({
+      protocol: parsed.protocol,
+      hostname: parsed.hostname,
+      port: parsed.port,
+      path: parsed.pathname,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(payload),
+      },
+      timeout: 5000,
+    }, (response) => {
+      let body = '';
+      response.setEncoding('utf8');
+      response.on('data', chunk => {
+        body += chunk;
+      });
+      response.on('end', () => {
+        if (response.statusCode && response.statusCode >= 200 && response.statusCode < 300) {
+          resolve();
+          return;
+        }
+
+        reject(new Error(body || `Manager returned HTTP ${response.statusCode}`));
+      });
+    });
+
+    request.on('timeout', () => {
+      request.destroy(new Error('Manager request timed out'));
+    });
+
+    request.on('error', reject);
+    request.write(payload);
+    request.end();
+  });
+}
+
+module.exports = { getStatus, subscribeStatus, restartServer, restartContainer };

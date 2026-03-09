@@ -370,6 +370,10 @@ body {
 
 .btn-warning   { background: var(--accent-warn); color: #0f1923; }
 .btn-warning:hover { background: #f59e0b; }
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
 
 .btn-danger    { background: var(--accent-error); color: #fff; }
 .btn-danger:hover { background: #dc2626; }
@@ -387,6 +391,7 @@ body {
   padding: 6px;
   border-radius: 6px;
   transition: background 0.15s;
+  text-decoration: none;
 }
 .btn-icon:hover { background: var(--bg-hover); }
 

@@ -1,6 +1,6 @@
 #!/bin/bash
-# Puppy Stardew Server Entrypoint Script - v1.0.66
-# 小狗星谷服务器启动脚本 - v1.0.66
+# Puppy Stardew Server Entrypoint Script - v1.0.76
+# 小狗星谷服务器启动脚本 - v1.0.76
 
 # DO NOT use set -e - we need manual error handling
 # 不使用 set -e - 需要手动错误处理
@@ -13,7 +13,11 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
-PANEL_ENV_FILE=${ENV_FILE:-/home/steam/.env}
+PANEL_ENV_FILE=${ENV_FILE:-/home/steam/web-panel/data/runtime.env}
+
+if [ ! -f "$PANEL_ENV_FILE" ] && [ -f "/home/steam/.env" ]; then
+    PANEL_ENV_FILE="/home/steam/.env"
+fi
 
 load_panel_env_overrides() {
     local env_file=${1:-$PANEL_ENV_FILE}
@@ -78,6 +82,22 @@ log_step() {
 
 log_steam() {
     echo -e "${CYAN}$1${NC}"
+}
+
+configure_audio_driver() {
+    if [ -n "${SDL_AUDIODRIVER:-}" ]; then
+        :
+    else
+        export SDL_AUDIODRIVER=dummy
+        log_info "No explicit audio driver configured; defaulting SDL_AUDIODRIVER=dummy"
+        log_info "未显式配置音频驱动，默认使用 SDL_AUDIODRIVER=dummy"
+    fi
+
+    if [ -z "${ALSOFT_DRIVERS:-}" ]; then
+        export ALSOFT_DRIVERS=null
+        log_info "No explicit OpenAL driver configured; defaulting ALSOFT_DRIVERS=null"
+        log_info "未显式配置 OpenAL 驱动，默认使用 ALSOFT_DRIVERS=null"
+    fi
 }
 
 configure_performance_mode() {
@@ -281,6 +301,7 @@ start_gpu_xorg() {
 # 此阶段仅处理 GPU Xorg 启动（需要 root）和用户切换。
 # =============================================
 
+configure_audio_driver
 configure_performance_mode
 
 if [ "$(id -u)" = "0" ]; then
@@ -321,8 +342,8 @@ fi
 # =============================================
 
 log_step "================================================"
-log_step "  Puppy Stardew Server v1.0.66 Starting..."
-log_step "  小狗星谷服务器 v1.0.66 启动中..."
+log_step "  Puppy Stardew Server v1.0.76 Starting..."
+log_step "  小狗星谷服务器 v1.0.76 启动中..."
 log_step "================================================"
 
 # Verify we're running as steam user
@@ -583,12 +604,14 @@ log_info "  Server is starting!"
 log_info "  服务器启动中！"
 log_info "================================================"
 log_info ""
-log_info "To create/load a save:"
-log_info "要创建/加载存档："
-log_info "  1. Connect via VNC: localhost:5900 (password: $VNC_PASSWORD)"
-log_info "  1. 通过 VNC 连接：localhost:5900（密码：$VNC_PASSWORD）"
-log_info "  2. Click CO-OP → Start new co-op farm"
-log_info "  2. 点击 CO-OP → 开始新的联机农场"
+log_info "Save setup options:"
+log_info "存档初始化方式："
+log_info "  1. Web panel: http://localhost:18642 (set admin password on first visit)"
+log_info "  1. Web 面板：http://localhost:18642（首次访问先设置管理密码）"
+log_info "  2. Upload an existing save in the panel and set it as the default auto-load save"
+log_info "  2. 在面板上传现有存档，并设为默认自动加载存档"
+log_info "  3. Optional: use VNC only if you want to create a new save manually in-game"
+log_info "  3. 可选：只有想手动进游戏创建新存档时才使用 VNC"
 log_info ""
 log_info "Players connect via:"
 log_info "玩家连接方式："

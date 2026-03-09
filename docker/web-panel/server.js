@@ -20,7 +20,7 @@ const SAVES_DIR = process.env.SAVES_DIR || '/home/steam/.config/StardewValley/Sa
 const BACKUPS_DIR = process.env.BACKUPS_DIR || '/home/steam/.local/share/puppy-stardew/backups';
 const GAME_DIR = process.env.GAME_DIR || '/home/steam/stardewvalley';
 const SMAPI_LOG = process.env.SMAPI_LOG || '/home/steam/.config/StardewValley/ErrorLogs/SMAPI-latest.txt';
-const ENV_FILE = process.env.ENV_FILE || '/home/steam/.env';
+const ENV_FILE = process.env.ENV_FILE || '/home/steam/web-panel/data/runtime.env';
 
 // Export paths for use by API modules
 const config = {
@@ -81,6 +81,7 @@ app.put('/api/config', auth.verifyMiddleware, configAPI.updateConfig);
 
 // Server control API
 app.post('/api/server/restart', auth.verifyMiddleware, statusAPI.restartServer);
+app.post('/api/container/restart', auth.verifyMiddleware, statusAPI.restartContainer);
 
 // Mods API
 const modsAPI = require('./api/mods');

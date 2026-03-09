@@ -216,7 +216,7 @@ EOPROM
 {
   "timestamp": "$timestamp",
   "server": {
-    "version": "1.0.66",
+    "version": "1.0.76",
     "game_running": $([ "$game_running" = "1" ] && echo "true" || echo "false"),
     "uptime_seconds": $uptime
   },

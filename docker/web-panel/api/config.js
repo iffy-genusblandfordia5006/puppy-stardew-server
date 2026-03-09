@@ -9,8 +9,8 @@ const config = require('../server');
 // Config field definitions with metadata
 const CONFIG_SCHEMA = {
   'Steam': [
-    { key: 'STEAM_USERNAME', label: 'Steam Username', type: 'text', sensitive: false, readonly: true },
-    { key: 'STEAM_PASSWORD', label: 'Steam Password', type: 'password', sensitive: true, readonly: true },
+    { key: 'STEAM_USERNAME', label: 'Steam Username', type: 'text', sensitive: false, readonly: false, descriptionKey: 'config.help.STEAM_USERNAME' },
+    { key: 'STEAM_PASSWORD', label: 'Steam Password', type: 'password', sensitive: true, readonly: false, preserveIfBlank: true, descriptionKey: 'config.help.STEAM_PASSWORD' },
   ],
   'VNC': [
     { key: 'ENABLE_VNC', label: 'Enable VNC', type: 'boolean', default: 'true' },
@@ -97,40 +97,56 @@ function listAvailableSaves() {
 }
 
 function parseEnvFile() {
-  const envPath = findEnvFile();
-  if (!envPath || !fs.existsSync(envPath)) return {};
-
-  const content = fs.readFileSync(envPath, 'utf-8');
   const env = {};
 
-  for (const line of content.split('\n')) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('#')) continue;
-
-    const eqIndex = trimmed.indexOf('=');
-    if (eqIndex === -1) continue;
-
-    const key = trimmed.slice(0, eqIndex).trim();
-    const value = trimmed.slice(eqIndex + 1).trim();
-    env[key] = value;
-  }
-
-  return env;
-}
-
-function findEnvFile() {
-  // Try multiple locations
   const candidates = [
     config.ENV_FILE,
     '/home/steam/.env',
     path.join(process.cwd(), '.env'),
   ];
 
-  for (const p of candidates) {
-    if (fs.existsSync(p)) return p;
+  for (const envPath of candidates) {
+    if (!envPath || !fs.existsSync(envPath)) continue;
+
+    const content = fs.readFileSync(envPath, 'utf-8');
+    for (const line of content.split('\n')) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+
+      const eqIndex = trimmed.indexOf('=');
+      if (eqIndex === -1) continue;
+
+      const key = trimmed.slice(0, eqIndex).trim();
+      const value = trimmed.slice(eqIndex + 1).trim();
+      env[key] = value;
+    }
   }
 
-  return config.ENV_FILE || '/home/steam/.env';
+  return env;
+}
+
+function hasDockerSecret(name) {
+  try {
+    return fs.existsSync(path.join('/run/secrets', name));
+  } catch (error) {
+    return false;
+  }
+}
+
+function isSecretsManaged(fieldKey) {
+  if (fieldKey === 'STEAM_USERNAME') {
+    return hasDockerSecret('steam_username');
+  }
+
+  if (fieldKey === 'STEAM_PASSWORD') {
+    return hasDockerSecret('steam_password');
+  }
+
+  return false;
+}
+
+function findEnvFile() {
+  return config.ENV_FILE || '/home/steam/web-panel/data/runtime.env';
 }
 
 function writeEnvFile(envData) {
@@ -143,11 +159,12 @@ function writeEnvFile(envData) {
   }
 
   if (!fs.existsSync(envPath)) {
-    fs.writeFileSync(
-      envPath,
-      '# Managed by Puppy Stardew Server web panel\n',
-      'utf-8'
-    );
+    const seed = parseEnvFile();
+    const lines = ['# Managed by Puppy Stardew Server web panel', ''];
+    for (const [key, value] of Object.entries(seed)) {
+      lines.push(`${key}=${value}`);
+    }
+    fs.writeFileSync(envPath, lines.join('\n'), 'utf-8');
   }
 
   // Read original file to preserve comments and order
@@ -190,6 +207,7 @@ function getConfig(req, res) {
 
   for (const [groupName, fields] of Object.entries(CONFIG_SCHEMA)) {
     const items = fields.map(field => {
+      const secretManaged = isSecretsManaged(field.key);
       // Try .env file first, then process.env, then default
       let value = env[field.key] || process.env[field.key] || field.default || '';
 
@@ -212,8 +230,10 @@ function getConfig(req, res) {
 
       return {
         ...field,
+        readonly: field.readonly || secretManaged,
         value: (field.sensitive && !field.viewable) ? undefined : value,
         hasValue: !!(env[field.key] || process.env[field.key]),
+        secretManaged,
         options,
       };
     });
@@ -231,24 +251,43 @@ function updateConfig(req, res) {
       return res.status(400).json({ error: 'Invalid request body' });
     }
 
-    // Validate: don't allow updating readonly fields
-    const readonlyKeys = new Set();
+    const fieldMap = new Map();
     for (const fields of Object.values(CONFIG_SCHEMA)) {
       for (const field of fields) {
-        if (field.readonly) readonlyKeys.add(field.key);
+        fieldMap.set(field.key, field);
       }
     }
 
     for (const key of Object.keys(updates)) {
-      if (readonlyKeys.has(key)) {
+      const field = fieldMap.get(key);
+      if (!field) {
+        continue;
+      }
+
+      if (field.readonly || isSecretsManaged(key)) {
         return res.status(400).json({ error: `Field '${key}' is read-only` });
       }
     }
 
-    writeEnvFile(updates);
+    const normalizedUpdates = { ...updates };
+    if (Object.prototype.hasOwnProperty.call(normalizedUpdates, 'ENABLE_VNC')) {
+      normalizedUpdates.VNC_BIND_HOST = normalizedUpdates.ENABLE_VNC === 'true' ? '0.0.0.0' : '127.0.0.1';
+    }
+
+    for (const [key, field] of fieldMap.entries()) {
+      if (!Object.prototype.hasOwnProperty.call(normalizedUpdates, key)) {
+        continue;
+      }
+
+      if (field.preserveIfBlank && normalizedUpdates[key] === '') {
+        delete normalizedUpdates[key];
+      }
+    }
+
+    writeEnvFile(normalizedUpdates);
     res.json({
       success: true,
-      message: 'Configuration updated. Restart server for changes to take effect.',
+      message: 'Configuration updated. Recreate the container to apply these changes.',
       needsRestart: true,
     });
   } catch (e) {

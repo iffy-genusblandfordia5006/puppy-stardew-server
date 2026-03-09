@@ -140,17 +140,17 @@ Setting up a **Stardew Valley dedicated server** has never been easier! With **o
 
 ## What's New in Latest Version
 
-### v1.0.75 (March 2026)
+### v1.0.76 (March 2026)
 
-**Web Panel, Save Management, and Stability Improvements:**
+**Web Panel, One-Click Setup, and Runtime Improvements:**
 - **🌐 First-Run Setup Flow** - The web panel now prompts for an admin password on first visit instead of relying on a shared default password
 - **🎨 Light/Dark Theme Support** - Theme preference persists across the login page and the main dashboard
 - **💾 Save Upload & Default Selection** - Upload Stardew Valley save archives from the panel, extract them on the server, and set a default auto-load save
-- **📦 Backup UX Improvements** - Background backup jobs, persistent progress state, and downloadable backup archives from the panel
-- **🧩 Mod Workflow Fixes** - Custom mod upload/delete now works reliably with clearer restart messaging
-- **📋 Better Logs & Dashboard Status** - Improved categorized logs, richer server details, better join IP handling, and more accurate runtime status reporting
-- **⚙️ Performance Tuning** - Added low-performance options, lower backup compression defaults, and reduced backup CPU spikes
-- **🔒 Auth & Persistence Fixes** - Persistent panel auth data, safer password bootstrap flow, and config/runtime path fixes
+- **📦 Backup UX Improvements** - Background backup jobs, persistent progress state, downloadable backup archives, and lower default compression for reduced CPU spikes
+- **🧩 Better Mod and Config Workflows** - Custom mod upload/delete is fixed, Steam credentials can be updated safely, and runtime config changes can trigger a real container rebuild from the panel
+- **📋 Better Logs & Dashboard Status** - Improved categorized logs, richer server details, better join IP handling, more accurate player/runtime status reporting, and a GitHub shortcut in the top bar
+- **🚀 Cleaner One-Click Bootstrap** - Quick-start output now matches the panel-first workflow, prefers IPv4 in its connection hint, and no longer points users at a shared default password
+- **🔇 Headless Audio Fixes** - Default headless audio/OpenAL settings now avoid noisy ALSA startup errors in clean Docker environments
 
 ## Quick Start
 

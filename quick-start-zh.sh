@@ -336,7 +336,7 @@ start_server() {
 get_server_ip() {
     # 尝试获取公网 IP
     if command -v curl &> /dev/null; then
-        public_ip=$(curl -s ifconfig.me 2>/dev/null || curl -s ip.sb 2>/dev/null || echo "")
+        public_ip=$(curl -4 -s ifconfig.me 2>/dev/null || curl -4 -s ip.sb 2>/dev/null || echo "")
         if [ -n "$public_ip" ]; then
             echo "$public_ip"
             return
@@ -375,22 +375,21 @@ print_next_steps() {
 
     echo -e "${BOLD}3. 🌐 Web 管理面板（推荐）：${NC}"
     echo -e "   - 浏览器访问: ${CYAN}http://$(get_server_ip):18642${NC}"
-    echo -e "   - 默认账号: ${CYAN}admin${NC} / 密码: ${CYAN}admin123${NC}"
-    echo -e "   - ${YELLOW}⚠️  首次登录后请立即修改密码！${NC}"
-    echo "   - 功能: 实时状态、日志查看、终端控制、存档管理"
+    echo "   - 首次访问会引导你创建管理密码"
+    echo "   - 功能: 实时状态、日志查看、终端控制、配置、存档、模组管理"
     echo ""
 
-    echo -e "${BOLD}4. 或通过 VNC 初始设置（仅首次）：${NC}"
+    echo -e "${BOLD}4. 可选的 VNC 初始设置（仅在需要手动进游戏时使用）：${NC}"
     echo "   - 下载 VNC 客户端（RealVNC、TightVNC 等）"
     echo -e "   - 连接到: ${CYAN}$(get_server_ip):5900${NC}"
     echo -e "   - 密码: ${CYAN}$(grep VNC_PASSWORD .env 2>/dev/null | cut -d'=' -f2 || echo 'stardew123')${NC}"
-    echo "   - 在游戏中创建或加载存档文件"
-    echo "   - 存档将在未来重启时自动加载！"
+    echo "   - 如果你想手动在游戏内创建新存档，可以使用 VNC"
+    echo "   - 或者直接在 Web 面板上传现有存档并设为默认自动加载"
     echo ""
 
     echo -e "${BOLD}5. 玩家可以连接：${NC}"
     echo "   - 打开星露谷物语"
-    echo "   - 点击"合作" → "加入局域网游戏""
+    echo '   - 点击 "合作" → "加入局域网游戏"'
     echo "   - 服务器会自动显示，或手动输入服务器 IP"
     echo -e "   ${YELLOW}⚠️  注意：只需输入 IP，端口 24642 是默认的无需指定${NC}"
     echo ""

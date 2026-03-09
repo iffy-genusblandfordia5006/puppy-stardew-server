@@ -905,7 +905,7 @@ EOPROM
 {
   "timestamp": "$timestamp",
   "server": {
-    "version": "1.0.66",
+    "version": "1.0.76",
     "game_running": true,
     "uptime_seconds": $uptime
   },

@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.0.76 (March 2026)
+
+### New Features
+- Added first-run password bootstrap for the web panel with persistent auth data storage.
+- Added save archive upload, default save selection, and direct backup download from the web panel.
+- Added a manager service so runtime config changes from the panel can trigger a real container rebuild/restart.
+
+### Improvements
+- Refined one-click setup output to match the new panel-first workflow and prefer IPv4 connection hints.
+- Improved dashboard, logs, mod management, backup UX, and runtime status reporting in the web panel.
+- Added default headless audio/OpenAL environment fallbacks to reduce noisy startup errors in clean Docker environments.
+
+### Bug Fixes
+- Fixed categorized log routing and fallback parsing when pre-split log files are missing.
+- Fixed player counting and display for the current SMAPI connection log formats.
+- Fixed config persistence paths, VNC exposure handling, and custom mod write/delete behavior.
+
 ## v1.0.66 (March 2026)
 
 ### New Features
@@ -56,4 +73,3 @@ docker-compose up -d
 ```
 
 无需其他操作！
-

@@ -389,17 +389,16 @@ show_next_steps() {
 
     echo -e "${BOLD}3. 🌐 Web Management Panel (Recommended):${NC}"
     echo -e "   - Browser access: ${CYAN}http://$(get_server_ip):18642${NC}"
-    echo -e "   - Default login: ${CYAN}admin${NC} / password: ${CYAN}admin123${NC}"
-    echo -e "   - ${YELLOW}⚠️  Change password immediately after first login!${NC}"
-    echo "   - Features: real-time status, logs, terminal, save management"
+    echo "   - First visit: create your admin password in the setup page"
+    echo "   - Features: real-time status, logs, terminal, config, saves, mods"
     echo ""
 
-    echo -e "${BOLD}4. Or initial setup via VNC (first time only):${NC}"
+    echo -e "${BOLD}4. Optional VNC setup (only if you want manual in-game setup):${NC}"
     echo "   - Download a VNC client (RealVNC, TightVNC, etc.)"
     echo -e "   - Connect to: ${CYAN}$(get_server_ip):5900${NC}"
     echo -e "   - Password: ${CYAN}$(grep VNC_PASSWORD .env | cut -d'=' -f2)${NC}"
-    echo "   - Create or load a save file in the game"
-    echo "   - The save will auto-load on future restarts!"
+    echo "   - Use this if you want to create a new save manually in-game"
+    echo "   - Or upload an existing save through the web panel and set it as default"
     echo ""
 
     echo -e "${BOLD}5. Players can connect:${NC}"
@@ -460,7 +459,7 @@ show_next_steps() {
 get_server_ip() {
     # Try to get public IP
     if command -v curl &> /dev/null; then
-        public_ip=$(curl -s ifconfig.me 2>/dev/null || echo "")
+        public_ip=$(curl -4 -s ifconfig.me 2>/dev/null || curl -4 -s ip.sb 2>/dev/null || echo "")
         if [ -n "$public_ip" ]; then
             echo "$public_ip"
             return

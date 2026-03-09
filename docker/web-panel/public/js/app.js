@@ -104,9 +104,12 @@ const translations = {
     'config.group.Backup': '备份设置', 'config.group.Stability': '稳定性',
     'config.group.Monitoring': '监控', 'config.group.Game': '游戏', 'config.group.Other': '其他',
     'config.autoDetect': '自动检测',
+    'config.readonlySecret': '由 Docker Secrets 管理，面板中不可修改。',
     'config.help.SAVE_NAME': '选择要自动加载的现有存档。留空时将使用默认存档加载逻辑。',
     'config.help.BACKUP_COMPRESSION_LEVEL': 'gzip 压缩级别，范围 1-9。1 占用 CPU 最低、备份更快，但文件会更大。',
     'config.help.PUBLIC_IP': '公网联机时填写你的公网 IP 或域名。留空时仪表盘会显示当前访问面板所用的地址，或容器检测到的内网 IP。',
+    'config.help.STEAM_USERNAME': '非 Docker Secrets 模式下可直接修改 Steam 登录账号。保存后重启容器生效。',
+    'config.help.STEAM_PASSWORD': '可在这里写入新的 Steam 密码。出于安全原因不会回显旧密码；留空表示保持现有密码不变。',
     'login.subtitle': '服务器管理面板', 'login.password': '密码', 'login.button': '登录',
     'setup.title': '设置管理密码', 'setup.subtitle': '首次使用，请设置您的管理密码',
     'setup.password': '设置密码', 'setup.confirm': '确认密码', 'setup.button': '开始使用',
@@ -122,12 +125,15 @@ const translations = {
     'toast.backupStarted': '备份任务已在后台开始，可以离开当前页面。',
     'toast.backupRunning': '已有备份任务正在进行中。',
     'toast.restartOk': '重启指令已发送', 'toast.restartFail': '重启失败',
+    'toast.containerRestarting': '容器正在重启，页面会自动重新连接。',
+    'toast.containerRestartFail': '容器重启失败',
     'toast.pwdOk': '密码修改成功', 'toast.pwdFail': '密码修改失败',
     'toast.configOk': '配置已保存，重启 Docker 容器后生效', 'toast.configFail': '配置保存失败',
     'toast.creatingBackup': '正在创建备份...', 'toast.passwordFields': '请填写两个密码字段',
     'actions.confirmRestart': '确定要重启服务器吗？',
-    'config.restartTitle': '需要重启容器', 'config.restartMessage': '配置已保存。请重启 Docker 容器或服务后再应用这些更改；这里的“重启服务器”按钮只会重启游戏进程。', 'config.restartNow': '我知道了', 'config.restartLater': '关闭',
+    'config.restartTitle': '需要重启容器', 'config.restartMessage': '配置已保存。你可以现在直接重启 Docker 容器来应用这些更改；仪表盘里的“重启服务器”按钮仍然只负责重启游戏进程。', 'config.restartNow': '立即重启容器', 'config.restartLater': '稍后',
     'config.showPassword': '显示密码', 'config.hidePassword': '隐藏密码',
+    'github.open': '打开项目 GitHub 仓库',
     'lang.toggle': '切换语言', 'logout.title': '退出登录',
     'theme.light': '切换到亮色模式', 'theme.dark': '切换到暗色模式',
   },
@@ -179,9 +185,12 @@ const translations = {
     'config.group.Backup': 'Backup', 'config.group.Stability': 'Stability',
     'config.group.Monitoring': 'Monitoring', 'config.group.Game': 'Game', 'config.group.Other': 'Other',
     'config.autoDetect': 'Auto-detect',
+    'config.readonlySecret': 'Managed by Docker Secrets and cannot be edited in the panel.',
     'config.help.SAVE_NAME': 'Choose an existing save to auto-load. Leave it empty to use the default save loading behavior.',
     'config.help.BACKUP_COMPRESSION_LEVEL': 'gzip compression level from 1 to 9. Level 1 uses the least CPU and finishes faster, but creates larger backups.',
     'config.help.PUBLIC_IP': 'Enter your public IP or domain for internet play. Leave it empty to show the current panel host or the container-detected LAN IP instead.',
+    'config.help.STEAM_USERNAME': 'In non-Secrets mode, you can update the Steam login account here. Takes effect after a container restart.',
+    'config.help.STEAM_PASSWORD': 'Write a new Steam password here. The current password is never shown back; leave it empty to keep the existing password.',
     'login.subtitle': 'Server Management Panel', 'login.password': 'Password', 'login.button': 'Login',
     'setup.title': 'Set Admin Password', 'setup.subtitle': 'First time setup - please create your admin password',
     'setup.password': 'Password', 'setup.confirm': 'Confirm Password', 'setup.button': 'Get Started',
@@ -197,12 +206,15 @@ const translations = {
     'toast.backupStarted': 'Backup started in the background. You can leave this page.',
     'toast.backupRunning': 'A backup is already in progress.',
     'toast.restartOk': 'Restart initiated', 'toast.restartFail': 'Restart failed',
+    'toast.containerRestarting': 'Container is restarting. This page will reconnect automatically.',
+    'toast.containerRestartFail': 'Container restart failed',
     'toast.pwdOk': 'Password changed', 'toast.pwdFail': 'Password change failed',
     'toast.configOk': 'Config saved. Restart the Docker container to apply.', 'toast.configFail': 'Failed to save config',
     'toast.creatingBackup': 'Creating backup...', 'toast.passwordFields': 'Please fill in both password fields',
     'actions.confirmRestart': 'Are you sure you want to restart the server?',
-    'config.restartTitle': 'Container Restart Required', 'config.restartMessage': 'Configuration has been saved. Restart the Docker container or service to apply these changes; the dashboard restart button only restarts the game process.', 'config.restartNow': 'Understood', 'config.restartLater': 'Close',
+    'config.restartTitle': 'Container Restart Required', 'config.restartMessage': 'Configuration has been saved. You can restart the Docker container now to apply these changes; the dashboard "Restart Server" button still only restarts the game process.', 'config.restartNow': 'Restart Container Now', 'config.restartLater': 'Later',
     'config.showPassword': 'Show password', 'config.hidePassword': 'Hide password',
+    'github.open': 'Open project GitHub repository',
     'lang.toggle': 'Switch language', 'logout.title': 'Log out',
     'theme.light': 'Switch to light mode', 'theme.dark': 'Switch to dark mode',
   },
@@ -984,6 +996,7 @@ async function loadConfig() {
           '<div class="config-label">' + escapeHtml(item.label) + '</div>' +
           '<div class="config-key">' + item.key + '</div>' +
           (item.descriptionKey ? '<div class="config-help">' + escapeHtml(t(item.descriptionKey)) + '</div>' : '') +
+          (item.secretManaged ? '<div class="config-help">' + escapeHtml(t('config.readonlySecret')) + '</div>' : '') +
         '</div>' +
         '<div class="config-value">' + valueHtml + '</div>';
       card.appendChild(row);
@@ -1053,7 +1066,8 @@ function showRestartModal() {
   message.textContent = t('config.restartMessage');
   laterBtn.textContent = t('config.restartLater');
   restartBtn.textContent = t('config.restartNow');
-  restartBtn.style.display = 'none';
+  restartBtn.style.display = '';
+  restartBtn.disabled = false;
 
   modal.style.display = '';
 
@@ -1063,13 +1077,66 @@ function showRestartModal() {
   };
 }
 
-function closeRestartModal() {
+function closeRestartModal(silent) {
   document.getElementById('restartModal').style.display = 'none';
-  showToast(t('toast.configOk'), 'success');
+  if (!silent) {
+    showToast(t('toast.configOk'), 'success');
+  }
 }
 
 async function confirmRestart() {
-  closeRestartModal();
+  var restartBtn = document.getElementById('restartNowBtn');
+  if (restartBtn) {
+    restartBtn.disabled = true;
+  }
+
+  try {
+    const data = await API.post('/api/container/restart');
+    if (data && data.success) {
+      showToast(t('toast.containerRestarting'), 'success');
+      startContainerReconnectPolling();
+      return;
+    }
+    showToast((data && data.error) || t('toast.containerRestartFail'), 'error');
+  } catch (error) {
+    // If the container stopped before the response fully returned, assume restart is underway.
+    showToast(t('toast.containerRestarting'), 'success');
+    startContainerReconnectPolling();
+    return;
+  }
+
+  if (restartBtn) {
+    restartBtn.disabled = false;
+  }
+}
+
+let containerReconnectPoll = null;
+
+function startContainerReconnectPolling() {
+  closeRestartModal(true);
+
+  if (containerReconnectPoll) {
+    clearInterval(containerReconnectPoll);
+  }
+
+  const startedAt = Date.now();
+  containerReconnectPoll = setInterval(async function() {
+    try {
+      const resp = await fetch('/api/auth/status', { cache: 'no-store' });
+      if (resp && resp.ok) {
+        clearInterval(containerReconnectPoll);
+        containerReconnectPoll = null;
+        window.location.reload();
+        return;
+      }
+    } catch (error) {}
+
+    if (Date.now() - startedAt > 120000) {
+      clearInterval(containerReconnectPoll);
+      containerReconnectPoll = null;
+      window.location.reload();
+    }
+  }, 2000);
 }
 
 // ─── Mods ────────────────────────────────────────────────────────

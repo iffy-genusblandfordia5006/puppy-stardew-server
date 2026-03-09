@@ -14,6 +14,18 @@
 # ============================================
 
 services:
+  stardew-manager:
+    build: ./docker/manager
+    image: puppy-stardew-manager:local
+    container_name: puppy-stardew-manager
+    restart: unless-stopped
+    environment:
+      - PROJECT_DIR=${PWD}
+      - COMPOSE_FILE=${PWD}/docker-compose.yml
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${PWD}:${PWD}:ro
+
   # Init container: fixes permissions before main server starts
   # 初始化容器：在主服务器启动前修复权限
   stardew-init:
@@ -38,6 +50,8 @@ services:
     container_name: puppy-stardew
     restart: unless-stopped  # Keep running after Steam Guard
     depends_on:
+      stardew-manager:
+        condition: service_started
       stardew-init:
         condition: service_completed_successfully
     # Interactive mode for Steam Guard
@@ -100,6 +114,7 @@ services:
       # Public join IP shown in dashboard - OPTIONAL
       # 仪表盘显示的公网联机 IP - 可选
       - PUBLIC_IP=${PUBLIC_IP:-}
+      - MANAGER_URL=${MANAGER_URL:-http://stardew-manager:18700}
 
     # Port mappings
     # 端口映射
@@ -110,7 +125,7 @@ services:
 
       # VNC port (OPTIONAL - only needed for initial setup)
       # VNC 端口（可选 - 仅首次设置需要）
-      - "5900:5900/tcp"
+      - "${VNC_BIND_HOST:-0.0.0.0}:5900:5900/tcp"
 
       # Prometheus metrics port (OPTIONAL - for monitoring)
       # Prometheus 指标端口（可选 - 用于监控）

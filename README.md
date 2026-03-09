@@ -128,21 +128,29 @@ Setting up a **Stardew Valley dedicated server** has never been easier! With **o
 
 </div>
 
+## Web Panel Screenshots
+
+### Dashboard
+
+![Web Panel Dashboard](screenshots/panel/Dashboard.png)
+
+### Saves and Backups
+
+![Web Panel Saves](screenshots/panel/Saves.png)
+
 ## What's New in Latest Version
 
-### v1.0.66 (March 2026)
+### v1.0.75 (March 2026)
 
-**Major Architecture Upgrade:**
-- **🌐 Web Management Panel** - Browser-based control panel at `http://your-server:18642`
-- **🔄 Crash Auto-Restart** - Game automatically restarts if it crashes (rate-limited to prevent loops)
-- **📊 Prometheus Metrics** - Monitor server health at `http://your-server:9090/metrics`
-- **💾 Save Selector** - Choose which save to auto-load via `SAVE_NAME` env var
-- **🔧 Custom Mods** - Install your own mods via `data/custom-mods/` volume
-- **🛡️ Player Access Control** - Whitelist/blacklist players via config file
-- **🐳 Init Container** - Separate permission-fixing container for cleaner architecture
-- **🔐 Docker Secrets** - Secure credential storage alternative to `.env` file
-- **📦 Optimized Image** - Smaller Docker image with fewer layers
-- **🔒 Reduced Privileges** - Dropped unnecessary Linux capabilities
+**Web Panel, Save Management, and Stability Improvements:**
+- **🌐 First-Run Setup Flow** - The web panel now prompts for an admin password on first visit instead of relying on a shared default password
+- **🎨 Light/Dark Theme Support** - Theme preference persists across the login page and the main dashboard
+- **💾 Save Upload & Default Selection** - Upload Stardew Valley save archives from the panel, extract them on the server, and set a default auto-load save
+- **📦 Backup UX Improvements** - Background backup jobs, persistent progress state, and downloadable backup archives from the panel
+- **🧩 Mod Workflow Fixes** - Custom mod upload/delete now works reliably with clearer restart messaging
+- **📋 Better Logs & Dashboard Status** - Improved categorized logs, richer server details, better join IP handling, and more accurate runtime status reporting
+- **⚙️ Performance Tuning** - Added low-performance options, lower backup compression defaults, and reduced backup CPU spikes
+- **🔒 Auth & Persistence Fixes** - Persistent panel auth data, safer password bootstrap flow, and config/runtime path fixes
 
 ## Quick Start
 

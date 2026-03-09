@@ -58,8 +58,15 @@ AutoHideHost-v*.zip
 
 # Screenshots (except the demo GIF used in README)
 screenshots/
+!screenshots/
+screenshots/*
 !screenshots/game/
 !screenshots/game/instant-sleep-demo.gif
+!screenshots/panel/
+!screenshots/panel/Dashboard.png
+!screenshots/panel/Saves.png
+!screenshots/panel/仪表盘.png
+!screenshots/panel/后台登录.png
 
 # C# build artifacts
 bin/

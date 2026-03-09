@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Puppy Stardew Server</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- Auth check: redirect to login if no token -->
+  <div id="app" style="display:none;">
+
+    <!-- Sidebar -->
+    <nav id="sidebar">
+      <div class="sidebar-header">
+        <span class="logo-emoji">🐶</span>
+        <span class="logo-text">Puppy Stardew</span>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item active" data-page="dashboard">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label" data-i18n="nav.dashboard">Dashboard</span>
+        </li>
+        <li class="nav-item" data-page="logs">
+          <span class="nav-icon">📋</span>
+          <span class="nav-label" data-i18n="nav.logs">Logs</span>
+        </li>
+        <li class="nav-item" data-page="terminal">
+          <span class="nav-icon">🖥️</span>
+          <span class="nav-label" data-i18n="nav.terminal">Terminal</span>
+        </li>
+        <li class="nav-item" data-page="players">
+          <span class="nav-icon">👥</span>
+          <span class="nav-label" data-i18n="nav.players">Players</span>
+        </li>
+        <li class="nav-item" data-page="saves">
+          <span class="nav-icon">💾</span>
+          <span class="nav-label" data-i18n="nav.saves">Saves</span>
+        </li>
+        <li class="nav-item" data-page="config">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label" data-i18n="nav.config">Config</span>
+        </li>
+        <li class="nav-item" data-page="mods">
+          <span class="nav-icon">🧩</span>
+          <span class="nav-label" data-i18n="nav.mods">Mods</span>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <button class="btn-icon" id="langToggle" title="中文/EN">🌐</button>
+        <button class="btn-icon" id="logoutBtn" title="Logout">🚪</button>
+      </div>
+    </nav>
+
+    <!-- Mobile bottom nav -->
+    <nav id="mobile-nav">
+      <button class="mob-nav-item active" data-page="dashboard">📊</button>
+      <button class="mob-nav-item" data-page="logs">📋</button>
+      <button class="mob-nav-item" data-page="terminal">🖥️</button>
+      <button class="mob-nav-item" data-page="players">👥</button>
+      <button class="mob-nav-item" data-page="saves">💾</button>
+      <button class="mob-nav-item" data-page="config">⚙️</button>
+      <button class="mob-nav-item" data-page="mods">🧩</button>
+    </nav>
+
+    <!-- Main content -->
+    <main id="content">
+      <header id="topbar">
+        <button id="menuToggle" class="btn-icon mobile-only">☰</button>
+        <h2 id="pageTitle">Dashboard</h2>
+        <div class="topbar-right">
+          <span id="serverStatus" class="status-badge offline">● Checking...</span>
+        </div>
+      </header>
+
+      <div id="page-container">
+        <!-- Dashboard Page -->
+        <section id="page-dashboard" class="page active">
+          <div class="cards-grid">
+            <div class="card stat-card">
+              <div class="stat-icon" id="stat-status-icon">⏳</div>
+              <div class="stat-info">
+                <div class="stat-value" id="stat-status">Checking...</div>
+                <div class="stat-label" data-i18n="dash.status">Server Status</div>
+              </div>
+            </div>
+            <div class="card stat-card">
+              <div class="stat-icon">👥</div>
+              <div class="stat-info">
+                <div class="stat-value" id="stat-players">-/-</div>
+                <div class="stat-label" data-i18n="dash.players">Online Players</div>
+              </div>
+            </div>
+            <div class="card stat-card">
+              <div class="stat-icon">⏱️</div>
+              <div class="stat-info">
+                <div class="stat-value" id="stat-uptime">--</div>
+                <div class="stat-label" data-i18n="dash.uptime">Uptime</div>
+              </div>
+            </div>
+            <div class="card stat-card">
+              <div class="stat-icon">📅</div>
+              <div class="stat-info">
+                <div class="stat-value" id="stat-day">--</div>
+                <div class="stat-label" data-i18n="dash.gameDay">Game Day</div>
+              </div>
+            </div>
+            <div class="card stat-card">
+              <div class="stat-icon">💾</div>
+              <div class="stat-info">
+                <div class="stat-value" id="stat-backups">--</div>
+                <div class="stat-label" data-i18n="dash.backups">Backups</div>
+              </div>
+            </div>
+            <div class="card stat-card">
+              <div class="stat-icon">🧩</div>
+              <div class="stat-info">
+                <div class="stat-value" id="stat-mods">--</div>
+                <div class="stat-label" data-i18n="dash.mods">Loaded Mods</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Resource bars -->
+          <div class="card" id="resources-card">
+            <h3 data-i18n="dash.resources">System Resources</h3>
+            <div class="resource-bar">
+              <div class="resource-header">
+                <span>CPU</span>
+                <span id="cpu-value">--%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" id="cpu-bar" style="width:0%"></div>
+              </div>
+            </div>
+            <div class="resource-bar">
+              <div class="resource-header">
+                <span>RAM</span>
+                <span id="ram-value">-- / -- MB</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" id="ram-bar" style="width:0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick actions -->
+          <div class="card">
+            <h3 data-i18n="dash.quickActions">Quick Actions</h3>
+            <div class="action-buttons">
+              <button class="btn btn-primary" onclick="navigateTo('logs')" data-i18n="dash.viewLogs">📋 View Logs</button>
+              <button class="btn btn-warning" onclick="restartServer()" data-i18n="dash.restart">🔄 Restart Server</button>
+              <button class="btn btn-success" onclick="createBackup()" data-i18n="dash.backup">💾 Backup Now</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Logs Page -->
+        <section id="page-logs" class="page">
+          <div class="card">
+            <div class="logs-toolbar">
+              <div class="log-filters">
+                <button class="log-filter active" data-filter="all">All</button>
+                <button class="log-filter" data-filter="error">Errors</button>
+                <button class="log-filter" data-filter="mod">Mods</button>
+                <button class="log-filter" data-filter="server">Server</button>
+                <button class="log-filter" data-filter="game">Game</button>
+              </div>
+              <div class="log-search">
+                <input type="text" id="logSearch" placeholder="Search logs..." />
+              </div>
+              <div class="log-controls">
+                <button class="btn btn-sm" id="logAutoScroll" title="Auto-scroll">⬇️ Auto</button>
+                <button class="btn btn-sm" id="logClear" title="Clear">🗑️</button>
+              </div>
+            </div>
+            <div id="logOutput" class="log-output"></div>
+          </div>
+        </section>
+
+        <!-- Terminal Page -->
+        <section id="page-terminal" class="page">
+          <div class="card">
+            <div class="terminal-toolbar">
+              <span data-i18n="term.title">SMAPI Console</span>
+              <div>
+                <button class="btn btn-sm btn-success" id="termConnect" onclick="terminalConnect()">Connect</button>
+                <button class="btn btn-sm btn-danger" id="termDisconnect" onclick="terminalDisconnect()" style="display:none">Disconnect</button>
+              </div>
+            </div>
+            <div id="termOutput" class="terminal-output">
+              <div class="terminal-hint" data-i18n="term.hint">Click "Connect" to open SMAPI console. You can enter Steam Guard codes or SMAPI commands here.</div>
+            </div>
+            <div class="terminal-input-row">
+              <input type="text" id="termInput" placeholder="Type command or Steam Guard code..." disabled
+                     onkeydown="if(event.key==='Enter')terminalSend()">
+              <button class="btn btn-primary" id="termSendBtn" onclick="terminalSend()" disabled>Send</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Players Page -->
+        <section id="page-players" class="page">
+          <div class="card">
+            <h3 data-i18n="players.title">Online Players</h3>
+            <div id="playersList" class="players-list">
+              <div class="empty-state" data-i18n="players.loading">Loading...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Saves Page -->
+        <section id="page-saves" class="page">
+          <div class="card">
+            <div class="section-header">
+              <h3 data-i18n="saves.title">Save Files</h3>
+              <button class="btn btn-success btn-sm" onclick="createBackup()">💾 Backup Now</button>
+            </div>
+            <div id="savesList" class="saves-list">
+              <div class="empty-state">Loading...</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-header">
+              <h3 data-i18n="saves.backups">Backups</h3>
+            </div>
+            <div id="backupsList" class="saves-list">
+              <div class="empty-state">Loading...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Config Page -->
+        <section id="page-config" class="page">
+          <div id="configContainer"></div>
+          <div class="card" style="margin-top:16px;">
+            <div class="section-header">
+              <h3 data-i18n="config.password">Change Panel Password</h3>
+            </div>
+            <div class="form-row">
+              <input type="password" id="oldPassword" placeholder="Current password" class="input" />
+              <input type="password" id="newPassword" placeholder="New password" class="input" />
+              <button class="btn btn-primary" onclick="changePassword()">Update</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Mods Page -->
+        <section id="page-mods" class="page">
+          <div class="card">
+            <h3 data-i18n="mods.title">Installed Mods</h3>
+            <div id="modsList" class="mods-list">
+              <div class="empty-state">Loading...</div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

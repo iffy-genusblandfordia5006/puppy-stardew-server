@@ -41,6 +41,7 @@ graph TB
         FW[Firewall<br/>Port 24642/UDP]
         VNC[VNC Access<br/>Port 5900/TCP]
         Metrics[Metrics<br/>Port 9090/TCP]
+        WebPanel[Web Panel<br/>Port 18642/TCP]
     end
 
     subgraph "Docker Container"
@@ -117,6 +118,7 @@ Setting up a **Stardew Valley dedicated server** has never been easier! With **o
 - **Crash Auto-Restart** 🔄 - Automatic recovery from game crashes
 - **Prometheus Metrics** 📊 - Real-time server health monitoring
 - **Custom Mods Support** 🔧 - Easy mod installation via volume mount
+- **Web Management Panel** 🌐 - Browser-based server control and monitoring
 
 <div align="center">
 
@@ -131,6 +133,7 @@ Setting up a **Stardew Valley dedicated server** has never been easier! With **o
 ### v1.0.66 (March 2026)
 
 **Major Architecture Upgrade:**
+- **🌐 Web Management Panel** - Browser-based control panel at `http://your-server:18642`
 - **🔄 Crash Auto-Restart** - Game automatically restarts if it crashes (rate-limited to prevent loops)
 - **📊 Prometheus Metrics** - Monitor server health at `http://your-server:9090/metrics`
 - **💾 Save Selector** - Choose which save to auto-load via `SAVE_NAME` env var
@@ -247,7 +250,23 @@ docker attach puppy-stardew
 
 ## Initial Setup (First Run Only)
 
-After the server starts, you need to create or load a save file **once**:
+After the server starts, you have **two options** to manage your server:
+
+### Option A: Web Management Panel (Recommended) 🌐
+
+Access the web panel at `http://your-server-ip:18642`
+
+- **Default credentials**: `admin` / `admin123` (⚠️ change immediately!)
+- **Features**:
+  - Real-time server status dashboard
+  - Live log streaming with filters
+  - Interactive terminal for SMAPI console
+  - Player management
+  - Save file backup/download
+  - Configuration editor
+  - Mod management
+
+### Option B: VNC Remote Desktop
 
 1. **Connect to VNC:**
    - Address: `your-server-ip:5900`

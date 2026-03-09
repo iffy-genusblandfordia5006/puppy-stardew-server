@@ -496,6 +496,15 @@ fi
 log_info "Starting status reporter (metrics port: ${METRICS_PORT:-9090})..."
 /home/steam/scripts/status-reporter.sh &
 
+# Start web panel
+log_info "Starting web management panel (port: 18642)..."
+cd /home/steam/web-panel
+node server.js &
+WEB_PANEL_PID=$!
+log_info "✓ Web panel started (PID: $WEB_PANEL_PID)"
+log_info "  Access at: http://localhost:18642"
+cd /home/steam/stardewvalley
+
 # Start player access control if configured
 if [ -f "/home/steam/.config/StardewValley/player-access.conf" ]; then
     log_info "Starting player access control..."

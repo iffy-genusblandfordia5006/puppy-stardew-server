@@ -34,6 +34,8 @@ RUN dpkg --add-architecture i386 && \
     dotnet-runtime-6.0 \
     # Utilities
     procps net-tools \
+    # Node.js for web panel
+    nodejs npm \
     && \
     # Clean up apt cache in same layer to reduce image size
     # 在同一层清理 apt 缓存以减小镜像大小
@@ -98,13 +100,19 @@ RUN chmod +x /home/steam/entrypoint.sh /home/steam/scripts/*.sh
 COPY --chown=steam:steam config/startup_preferences /home/steam/startup_preferences.template
 COPY --chown=steam:steam config/10-monitor.conf /etc/X11/xorg.conf.d/10-monitor.conf
 
+# Copy web panel and install dependencies
+# 复制 Web 管理面板并安装依赖
+COPY --chown=steam:steam web-panel/ /home/steam/web-panel/
+RUN cd /home/steam/web-panel && npm ci --only=production && \
+    chown -R steam:steam /home/steam/web-panel
+
 # Run as root to allow permission fixes on startup
 # 以 root 身份运行以允许启动时修复权限
 USER root
 
-# Expose game port (UDP), VNC port (TCP), and metrics port (TCP)
-# 暴露游戏端口（UDP）、VNC 端口（TCP）和指标端口（TCP）
-EXPOSE 24642/udp 5900/tcp 9090/tcp
+# Expose game port (UDP), VNC port (TCP), metrics port (TCP), and web panel port (TCP)
+# 暴露游戏端口（UDP）、VNC 端口（TCP）、指标端口（TCP）和 Web 面板端口（TCP）
+EXPOSE 24642/udp 5900/tcp 9090/tcp 18642/tcp
 
 # Health check to ensure server is running
 # 健康检查确保服务器正在运行

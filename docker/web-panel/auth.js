@@ -148,7 +148,7 @@ function verifyToken(token) {
  * Public setup status
  */
 function getStatus(req, res) {
-  res.json({ needsSetup: !!panelConfig?.needsSetup });
+  res.json({ needsSetup: !!(panelConfig && panelConfig.needsSetup) });
 }
 
 /**
@@ -156,7 +156,7 @@ function getStatus(req, res) {
  * Body: { password, confirmPassword }
  */
 async function setup(req, res) {
-  if (!panelConfig?.needsSetup) {
+  if (!(panelConfig && panelConfig.needsSetup)) {
     return res.status(403).json({ error: 'Setup already completed' });
   }
 
@@ -206,7 +206,7 @@ async function setup(req, res) {
 async function login(req, res) {
   const ip = req.ip || req.connection.remoteAddress;
 
-  if (panelConfig?.needsSetup) {
+  if (panelConfig && panelConfig.needsSetup) {
     return res.status(403).json({ error: 'Setup required', needsSetup: true });
   }
 
@@ -265,7 +265,7 @@ function verify(req, res) {
  * Body: { oldPassword, newPassword }
  */
 async function changePassword(req, res) {
-  if (panelConfig?.needsSetup) {
+  if (panelConfig && panelConfig.needsSetup) {
     return res.status(403).json({ error: 'Setup required', needsSetup: true });
   }
 

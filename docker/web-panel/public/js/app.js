@@ -28,6 +28,20 @@ let logAutoScroll = true;
 let statusInterval = null;
 let lastStatusData = null;
 
+function detectTheme() {
+  const saved = localStorage.getItem('panel_theme');
+  if (saved === 'dark' || saved === 'light') {
+    return saved;
+  }
+
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches
+    ? 'light'
+    : 'dark';
+}
+
+let currentTheme = detectTheme();
+document.documentElement.dataset.theme = currentTheme;
+
 // ─── i18n ────────────────────────────────────────────────────────
 function detectLanguage() {
   const saved = localStorage.getItem('panel_lang');
@@ -79,7 +93,11 @@ const translations = {
     'toast.configOk': '配置已保存，重启后生效', 'toast.configFail': '配置保存失败',
     'toast.creatingBackup': '正在创建备份...', 'toast.passwordFields': '请填写两个密码字段',
     'actions.confirmRestart': '确定要重启服务器吗？',
+    'config.restartTitle': '需要重启', 'config.restartMessage': '配置已保存。重启服务器后更改将生效。',
+    'config.restartNow': '立即重启', 'config.restartLater': '稍后',
+    'config.showPassword': '显示密码', 'config.hidePassword': '隐藏密码',
     'lang.toggle': '切换语言', 'logout.title': '退出登录',
+    'theme.light': '切换到亮色模式', 'theme.dark': '切换到暗色模式',
   },
   en: {
     'nav.dashboard': 'Dashboard', 'nav.logs': 'Logs', 'nav.terminal': 'Terminal',
@@ -120,7 +138,11 @@ const translations = {
     'toast.configOk': 'Config saved. Restart to apply.', 'toast.configFail': 'Failed to save config',
     'toast.creatingBackup': 'Creating backup...', 'toast.passwordFields': 'Please fill in both password fields',
     'actions.confirmRestart': 'Are you sure you want to restart the server?',
+    'config.restartTitle': 'Restart Required', 'config.restartMessage': 'Configuration has been saved. Restart the server for changes to take effect.',
+    'config.restartNow': 'Restart Now', 'config.restartLater': 'Later',
+    'config.showPassword': 'Show password', 'config.hidePassword': 'Hide password',
     'lang.toggle': 'Switch language', 'logout.title': 'Log out',
+    'theme.light': 'Switch to light mode', 'theme.dark': 'Switch to dark mode',
   },
 };
 
@@ -147,6 +169,18 @@ function statusDot(state) {
   return `<span class="status-dot ${state}" aria-hidden="true"></span>`;
 }
 
+function applyTheme() {
+  document.documentElement.dataset.theme = currentTheme;
+  const themeIcon = document.querySelector('#themeToggle use');
+  if (themeIcon) {
+    themeIcon.setAttribute('href', currentTheme === 'dark' ? '#icon-theme-light' : '#icon-theme-dark');
+  }
+  const toggle = document.getElementById('themeToggle');
+  if (toggle) {
+    toggle.setAttribute('title', t(currentTheme === 'dark' ? 'theme.light' : 'theme.dark'));
+  }
+}
+
 function applyTranslations() {
   document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
   document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -159,6 +193,7 @@ function applyTranslations() {
     el.setAttribute('title', t(el.dataset.i18nTitle));
   });
   document.getElementById('pageTitle').textContent = t(`nav.${currentPage}`) || t('nav.dashboard');
+  applyTheme();
   if (lastStatusData) {
     updateDashboardUI(lastStatusData);
   }
@@ -166,6 +201,7 @@ function applyTranslations() {
 
 // ─── Init ────────────────────────────────────────────────────────
 function init() {
+  applyTheme();
   applyTranslations();
   setupNavigation();
   setupWebSocket();
@@ -183,6 +219,12 @@ function init() {
     localStorage.setItem('panel_lang', currentLang);
     applyTranslations();
     reloadCurrentPage();
+  };
+
+  document.getElementById('themeToggle').onclick = () => {
+    currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('panel_theme', currentTheme);
+    applyTheme();
   };
 
   // Mobile menu toggle
@@ -593,7 +635,7 @@ async function loadConfig() {
     const card = document.createElement('div');
     card.className = 'card config-group';
     var groupLabel = t('config.group.' + group.name) || group.name;
-    card.innerHTML = `<div class="config-group-title">${escapeHtml(groupLabel)}</div>`;
+    card.innerHTML = '<div class="config-group-title">' + escapeHtml(groupLabel) + '</div>';
 
     for (const item of group.items) {
       const row = document.createElement('div');
@@ -601,52 +643,80 @@ async function loadConfig() {
 
       let valueHtml;
       if (item.readonly) {
-        valueHtml = `<span style="color:var(--text-muted)">${item.sensitive ? '••••••••' : escapeHtml(item.value || '--')}</span>`;
+        valueHtml = '<span style="color:var(--text-muted)">' + (item.sensitive ? '••••••••' : escapeHtml(item.value || '--')) + '</span>';
       } else if (item.type === 'boolean') {
         const checked = item.value === 'true' || item.hasValue && item.value !== 'false' ? 'checked' : '';
-        valueHtml = `<label class="toggle">
-          <input type="checkbox" data-key="${item.key}" ${checked} onchange="configChanged()">
-          <span class="toggle-slider"></span>
-        </label>`;
+        valueHtml = '<label class="toggle">' +
+          '<input type="checkbox" data-key="' + item.key + '" ' + checked + ' onchange="configChanged()">' +
+          '<span class="toggle-slider"></span>' +
+        '</label>';
+      } else if (item.viewable) {
+        // Viewable password field (e.g. VNC_PASSWORD) - show real value with toggle
+        valueHtml = '<div class="password-wrapper">' +
+          '<input type="password" class="input" data-key="' + item.key + '"' +
+          ' value="' + escapeHtml(item.value || '') + '"' +
+          ' placeholder="' + escapeHtml(item.default || '') + '"' +
+          (item.maxLength ? ' maxlength="' + item.maxLength + '"' : '') +
+          ' style="width:150px" onchange="configChanged()" oninput="configChanged()">' +
+          '<button type="button" class="password-toggle" onclick="togglePasswordVisibility(this)" title="' + t('config.showPassword') + '">' +
+          icon('eye', 'icon') +
+          '</button>' +
+        '</div>';
       } else if (item.sensitive) {
-        valueHtml = `<input type="password" class="input" data-key="${item.key}" placeholder="••••••••" style="width:150px" onchange="configChanged()">`;
+        // Truly sensitive fields (e.g. STEAM_PASSWORD) - never show value
+        valueHtml = '<input type="password" class="input" data-key="' + item.key + '" placeholder="••••••••" style="width:150px" onchange="configChanged()">';
       } else {
-        valueHtml = `<input type="${item.type === 'number' ? 'number' : 'text'}" class="input" data-key="${item.key}"
-          value="${escapeHtml(item.value || '')}" placeholder="${escapeHtml(item.default || '')}"
-          style="width:150px" onchange="configChanged()">`;
+        valueHtml = '<input type="' + (item.type === 'number' ? 'number' : 'text') + '" class="input" data-key="' + item.key + '"' +
+          ' value="' + escapeHtml(item.value || '') + '" placeholder="' + escapeHtml(item.default || '') + '"' +
+          ' style="width:150px" onchange="configChanged()" oninput="configChanged()">';
       }
 
-      row.innerHTML = `
-        <div>
-          <div class="config-label">${escapeHtml(item.label)}</div>
-          <div class="config-key">${item.key}</div>
-        </div>
-        <div class="config-value">${valueHtml}</div>
-      `;
+      row.innerHTML =
+        '<div>' +
+          '<div class="config-label">' + escapeHtml(item.label) + '</div>' +
+          '<div class="config-key">' + item.key + '</div>' +
+        '</div>' +
+        '<div class="config-value">' + valueHtml + '</div>';
       card.appendChild(row);
     }
 
     container.appendChild(card);
   }
 
-  // Add save button
+  // Add save button (always visible but starts hidden, shown on change)
   const saveBtn = document.createElement('div');
   saveBtn.style.textAlign = 'right';
-  saveBtn.innerHTML = `<button class="btn btn-success" id="saveConfigBtn" onclick="saveConfig()" style="display:none">${t('config.saveChanges')}</button>`;
+  saveBtn.innerHTML = '<button class="btn btn-success" id="saveConfigBtn" onclick="saveConfig()" style="display:none">' + t('config.saveChanges') + '</button>';
   container.appendChild(saveBtn);
 }
 
 function configChanged() {
-  document.getElementById('saveConfigBtn').style.display = '';
+  var btn = document.getElementById('saveConfigBtn');
+  if (btn) btn.style.display = '';
+}
+
+function togglePasswordVisibility(btn) {
+  var wrapper = btn.parentElement;
+  var input = wrapper.querySelector('input');
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.innerHTML = icon('eye-off', 'icon');
+    btn.title = t('config.hidePassword');
+  } else {
+    input.type = 'password';
+    btn.innerHTML = icon('eye', 'icon');
+    btn.title = t('config.showPassword');
+  }
 }
 
 async function saveConfig() {
   const updates = {};
-  document.querySelectorAll('[data-key]').forEach(el => {
+  document.querySelectorAll('[data-key]').forEach(function(el) {
     const key = el.dataset.key;
     if (el.type === 'checkbox') {
       updates[key] = el.checked ? 'true' : 'false';
-    } else if (el.value) {
+    } else {
+      // Include all values, even empty strings (to allow clearing fields)
       updates[key] = el.value;
     }
   });
@@ -655,10 +725,46 @@ async function saveConfig() {
 
   const data = await API.put('/api/config', updates);
   if (data && data.success) {
-    showToast(t('toast.configOk'), 'success');
     document.getElementById('saveConfigBtn').style.display = 'none';
+    // Show restart confirmation dialog instead of just a toast
+    showRestartModal();
   } else {
-    showToast(data?.error || t('toast.configFail'), 'error');
+    showToast((data && data.error) || t('toast.configFail'), 'error');
+  }
+}
+
+function showRestartModal() {
+  var modal = document.getElementById('restartModal');
+  var title = document.getElementById('restartModalTitle');
+  var message = document.getElementById('restartModalMessage');
+  var laterBtn = document.getElementById('restartLaterBtn');
+  var restartBtn = document.getElementById('restartNowBtn');
+
+  title.textContent = t('config.restartTitle');
+  message.textContent = t('config.restartMessage');
+  laterBtn.textContent = t('config.restartLater');
+  restartBtn.textContent = t('config.restartNow');
+
+  modal.style.display = '';
+
+  // Close on overlay click
+  modal.onclick = function(e) {
+    if (e.target === modal) closeRestartModal();
+  };
+}
+
+function closeRestartModal() {
+  document.getElementById('restartModal').style.display = 'none';
+  showToast(t('toast.configOk'), 'success');
+}
+
+async function confirmRestart() {
+  document.getElementById('restartModal').style.display = 'none';
+  const data = await API.post('/api/server/restart');
+  if (data && data.success) {
+    showToast(t('toast.restartOk'), 'success');
+  } else {
+    showToast((data && data.error) || t('toast.restartFail'), 'error');
   }
 }
 

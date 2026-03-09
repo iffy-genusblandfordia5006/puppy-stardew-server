@@ -17,7 +17,7 @@ services:
   # Init container: fixes permissions before main server starts
   # 初始化容器：在主服务器启动前修复权限
   stardew-init:
-    image: truemanlive/puppy-stardew-server:v1.0.70
+    image: truemanlive/puppy-stardew-server:v1.0.71
     container_name: puppy-stardew-init
     user: root
     entrypoint: ["/home/steam/scripts/init-container.sh"]
@@ -31,7 +31,7 @@ services:
       - ./data/backups:/home/steam/.local/share/puppy-stardew/backups:rw
 
   stardew-server:
-    image: truemanlive/puppy-stardew-server:v1.0.70
+    image: truemanlive/puppy-stardew-server:v1.0.71
     container_name: puppy-stardew
     restart: unless-stopped  # Keep running after Steam Guard
     depends_on:

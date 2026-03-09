@@ -14,7 +14,7 @@ const CONFIG_SCHEMA = {
   ],
   'VNC': [
     { key: 'ENABLE_VNC', label: 'Enable VNC', type: 'boolean', default: 'true' },
-    { key: 'VNC_PASSWORD', label: 'VNC Password', type: 'password', sensitive: true, default: 'stardew1', maxLength: 8 },
+    { key: 'VNC_PASSWORD', label: 'VNC Password', type: 'password', viewable: true, default: 'stardew1', maxLength: 8 },
   ],
   'Display': [
     { key: 'RESOLUTION_WIDTH', label: 'Resolution Width', type: 'number', default: '1280' },
@@ -128,14 +128,14 @@ function getConfig(req, res) {
       // Try .env file first, then process.env, then default
       let value = env[field.key] || process.env[field.key] || field.default || '';
 
-      // Mask sensitive fields
-      if (field.sensitive && value) {
+      // Mask sensitive fields (e.g. STEAM_PASSWORD) but NOT viewable fields (e.g. VNC_PASSWORD)
+      if (field.sensitive && !field.viewable && value) {
         value = '••••••••';
       }
 
       return {
         ...field,
-        value: field.sensitive ? undefined : value,
+        value: (field.sensitive && !field.viewable) ? undefined : value,
         hasValue: !!(env[field.key] || process.env[field.key]),
       };
     });

@@ -36,7 +36,7 @@ function getLogSource(filter) {
 function matchesFilter(filter, line) {
   if (!line || filter === 'all' || filter === 'smapi') return true;
   if (filter === 'error') return /ERROR|FATAL|Exception/i.test(line);
-  if (filter === 'mod') return /\[.*\].*(Always On Server|AutoHideHost|Server Auto Load)/i.test(line) || /(Always On Server|AutoHideHost|Server Auto Load)/i.test(line);
+  if (filter === 'mod') return /\[\d{2}:\d{2}:\d{2}\s+(TRACE|DEBUG|INFO|WARN|ERROR)\s+[^\]]+\]/i.test(line);
   if (filter === 'server') return /Server|Multiplayer|Connection|Player/i.test(line);
   if (filter === 'game') return true;
   return true;

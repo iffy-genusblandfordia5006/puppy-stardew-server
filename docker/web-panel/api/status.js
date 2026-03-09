@@ -18,7 +18,19 @@ let cachedStatus = null;
 let cacheTime = 0;
 const CACHE_TTL = 3000; // 3 seconds
 
-function getNetworkInfo() {
+function normalizeJoinHost(host) {
+  if (!host) return '';
+
+  const firstHost = host.split(',')[0].trim();
+  const match = firstHost.match(/^\[([^\]]+)\](?::\d+)?$/);
+  if (match) {
+    return match[1];
+  }
+
+  return firstHost.replace(/:\d+$/, '');
+}
+
+function getNetworkInfo(requestHost = '') {
   const configuredPublicIp = process.env.PUBLIC_IP || process.env.SERVER_IP || '';
   let localIps = [];
 
@@ -29,19 +41,26 @@ function getNetworkInfo() {
       .filter(ip => ip && ip !== '127.0.0.1' && ip !== '::1');
   } catch (error) {}
 
+  const hostFromRequest = normalizeJoinHost(requestHost);
+  const derivedJoinIp = hostFromRequest && hostFromRequest !== 'localhost' && hostFromRequest !== '127.0.0.1'
+    ? hostFromRequest
+    : '';
+
   return {
-    joinIp: configuredPublicIp || localIps[0] || '',
+    joinIp: configuredPublicIp || derivedJoinIp || localIps[0] || '',
     localIps,
     joinPort: 24642,
     metricsPort: parseInt(process.env.METRICS_PORT || '9090', 10),
   };
 }
 
-function collectStatus() {
+function collectStatus(req = null) {
   const now = Date.now();
   if (cachedStatus && now - cacheTime < CACHE_TTL) {
     return cachedStatus;
   }
+
+  const requestHost = (req && req.headers && (req.headers['x-forwarded-host'] || req.headers['host'])) || '';
 
   const status = {
     timestamp: new Date().toISOString(),
@@ -61,7 +80,7 @@ function collectStatus() {
       readycheck: 0,
       offline: 0,
     },
-    network: getNetworkInfo(),
+    network: getNetworkInfo(requestHost),
   };
 
   // Read status.json from status-reporter.sh
@@ -139,6 +158,13 @@ function collectStatus() {
     // Process not found
   }
 
+  if (!status.scriptsHealthy) {
+    try {
+      execSync('pgrep -f "event-handler.sh" >/dev/null 2>&1');
+      status.scriptsHealthy = true;
+    } catch (error) {}
+  }
+
   // Count backups
   try {
     if (fs.existsSync(config.BACKUPS_DIR)) {
@@ -199,7 +225,7 @@ setInterval(() => {
 // ─── Route Handlers ──────────────────────────────────────────────
 
 function getStatus(req, res) {
-  const status = collectStatus();
+  const status = collectStatus(req);
   res.json(status);
 }
 

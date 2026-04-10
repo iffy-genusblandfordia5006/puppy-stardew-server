@@ -154,7 +154,7 @@ download_files() {
 
     if [ ! -d "puppy-stardew-server" ]; then
         print_info "克隆仓库..."
-        if git clone https://github.com/truman-world/puppy-stardew-server.git; then
+        if git clone https://github.com/AmigaMeow/puppy-stardew-server.git; then
             print_success "仓库已克隆！"
         else
             print_error "克隆失败！请检查网络连接。"

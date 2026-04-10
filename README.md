@@ -12,7 +12,7 @@
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/truemanlive/puppy-stardew-server)](https://hub.docker.com/r/truemanlive/puppy-stardew-server)
 [![Docker Image Size](https://img.shields.io/docker/image-size/truemanlive/puppy-stardew-server)](https://hub.docker.com/r/truemanlive/puppy-stardew-server)
-[![GitHub Stars](https://img.shields.io/github/stars/truman-world/puppy-stardew-server)](https://github.com/truman-world/puppy-stardew-server)
+[![GitHub Stars](https://img.shields.io/github/stars/AmigaMeow/puppy-stardew-server)](https://github.com/AmigaMeow/puppy-stardew-server)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 English | [中文](README_CN.md)
@@ -114,7 +114,7 @@ graph TB
 
 <div align="center">
 
-![Instant Sleep Demo](https://raw.githubusercontent.com/truman-world/puppy-stardew-server/main/screenshots/game/instant-sleep-demo.gif)
+![Instant Sleep Demo](https://raw.githubusercontent.com/AmigaMeow/puppy-stardew-server/main/screenshots/game/instant-sleep-demo.gif)
 
 *Included automation allows the server to progress without waiting on a visible host client.*
 
@@ -158,7 +158,7 @@ This release focused on closing the gap between a working prototype and an opera
 **English Version:**
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/truman-world/puppy-stardew-server/main/quick-start.sh | bash
+curl -sSL https://raw.githubusercontent.com/AmigaMeow/puppy-stardew-server/main/quick-start.sh | bash
 ```
 
 The script will:
@@ -187,13 +187,13 @@ The script will:
 
 ```bash
 # Clone the repository
-git clone https://github.com/truman-world/puppy-stardew-server.git
+git clone https://github.com/AmigaMeow/puppy-stardew-server.git
 cd puppy-stardew-server
 
 # Or download files directly
 mkdir puppy-stardew && cd puppy-stardew
-wget https://raw.githubusercontent.com/truman-world/puppy-stardew-server/main/docker-compose.yml
-wget https://raw.githubusercontent.com/truman-world/puppy-stardew-server/main/.env.example
+wget https://raw.githubusercontent.com/AmigaMeow/puppy-stardew-server/main/docker-compose.yml
+wget https://raw.githubusercontent.com/AmigaMeow/puppy-stardew-server/main/.env.example
 ```
 
 #### Step 2: Configure Environment
@@ -845,8 +845,8 @@ Contributions are welcome! Please:
 
 ## Support & Community
 
-- **Bug Reports**: [GitHub Issues](https://github.com/truman-world/puppy-stardew-server/issues)
-- **Questions**: [GitHub Discussions](https://github.com/truman-world/puppy-stardew-server/discussions)
+- **Bug Reports**: [GitHub Issues](https://github.com/AmigaMeow/puppy-stardew-server/issues)
+- **Questions**: [GitHub Discussions](https://github.com/AmigaMeow/puppy-stardew-server/discussions)
 - **Docker Hub**: [truemanlive/puppy-stardew-server](https://hub.docker.com/r/truemanlive/puppy-stardew-server)
 
 ## Star History

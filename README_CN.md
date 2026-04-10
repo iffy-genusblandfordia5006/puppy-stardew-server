@@ -12,7 +12,7 @@
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/truemanlive/puppy-stardew-server)](https://hub.docker.com/r/truemanlive/puppy-stardew-server)
 [![Docker Image Size](https://img.shields.io/docker/image-size/truemanlive/puppy-stardew-server)](https://hub.docker.com/r/truemanlive/puppy-stardew-server)
-[![GitHub Stars](https://img.shields.io/github/stars/truman-world/puppy-stardew-server)](https://github.com/truman-world/puppy-stardew-server)
+[![GitHub Stars](https://img.shields.io/github/stars/AmigaMeow/puppy-stardew-server)](https://github.com/AmigaMeow/puppy-stardew-server)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 [English](README.md) | 中文
@@ -114,7 +114,7 @@ graph TB
 
 <div align="center">
 
-![即时睡眠演示](https://raw.githubusercontent.com/truman-world/puppy-stardew-server/main/screenshots/game/instant-sleep-demo.gif)
+![即时睡眠演示](https://raw.githubusercontent.com/AmigaMeow/puppy-stardew-server/main/screenshots/game/instant-sleep-demo.gif)
 
 *自动化模组可以让服务器在无可见房主的情况下继续推进游戏流程。*
 
@@ -158,7 +158,7 @@ graph TB
 **中文版（官方）:**
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/truman-world/puppy-stardew-server/main/quick-start-zh.sh | bash
+curl -sSL https://raw.githubusercontent.com/AmigaMeow/puppy-stardew-server/main/quick-start-zh.sh | bash
 ```
 
 **中文版（国内加速）:**
@@ -167,13 +167,13 @@ curl -sSL https://raw.githubusercontent.com/truman-world/puppy-stardew-server/ma
 
 ```bash
 # 加速方案 1: jsDelivr CDN（推荐）
-curl -sSL https://cdn.jsdelivr.net/gh/truman-world/puppy-stardew-server@main/quick-start-zh.sh | bash
+curl -sSL https://cdn.jsdelivr.net/gh/AmigaMeow/puppy-stardew-server@main/quick-start-zh.sh | bash
 
 # 加速方案 2: Statically CDN
-curl -sSL https://cdn.statically.io/gh/truman-world/puppy-stardew-server/main/quick-start-zh.sh | bash
+curl -sSL https://cdn.statically.io/gh/AmigaMeow/puppy-stardew-server/main/quick-start-zh.sh | bash
 
 # 加速方案 3: GitHack
-curl -sSL https://raw.githack.com/truman-world/puppy-stardew-server/main/quick-start-zh.sh | bash
+curl -sSL https://raw.githack.com/AmigaMeow/puppy-stardew-server/main/quick-start-zh.sh | bash
 ```
 
 **⚠️ 如果所有加速方案都无法访问**，请使用**方式 2：手动部署**（见下方），步骤同样简单，且**完全不需要访问 GitHub**。
@@ -805,8 +805,8 @@ docker compose up -d
 
 ## 支持与社区
 
-- **错误报告**：[GitHub Issues](https://github.com/truman-world/puppy-stardew-server/issues)
-- **问题讨论**：[GitHub Discussions](https://github.com/truman-world/puppy-stardew-server/discussions)
+- **错误报告**：[GitHub Issues](https://github.com/AmigaMeow/puppy-stardew-server/issues)
+- **问题讨论**：[GitHub Discussions](https://github.com/AmigaMeow/puppy-stardew-server/discussions)
 - **Docker Hub**：[truemanlive/puppy-stardew-server](https://hub.docker.com/r/truemanlive/puppy-stardew-server)
 
 ## Star 历史

@@ -91,6 +91,6 @@
 
 ## 参考信息
 
-- **Issue #17**: https://github.com/truman-world/puppy-stardew-server/issues/17
+- **Issue #17**: https://github.com/AmigaMeow/puppy-stardew-server/issues/17
 - **用户反馈**: 凌晨2点时，加入的玩家会自动休息，但主机不会，导致游戏卡住
 - **解决方案**: 按 F9 + 移动角色可以触发主机休息

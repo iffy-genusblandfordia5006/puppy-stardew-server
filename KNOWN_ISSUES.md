@@ -133,7 +133,7 @@ Follow the setup instructions in the README:
 If you encounter an issue not listed here, please report it:
 如果遇到此处未列出的问题，请报告：
 
-- GitHub Issues: https://github.com/truman-world/puppy-stardew-server/issues
+- GitHub Issues: https://github.com/AmigaMeow/puppy-stardew-server/issues
 - Docker Hub: https://hub.docker.com/r/truemanlive/puppy-stardew-server
 
 Please include:

